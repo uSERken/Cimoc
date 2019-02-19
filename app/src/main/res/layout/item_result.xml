@@ -28,6 +28,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/result_comic_updateTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/result_comic_image"
+        android:paddingRight="4dp"
+        android:layout_alignParentBottom="true"
+        android:textSize="14sp" />
     <TextView
         android:id="@+id/result_comic_title"
         android:layout_width="wrap_content"

@@ -87,7 +87,7 @@ public class UpdateHelper {
      * 初始化图源
      */
     private static void initSource(DaoSession session) {
-        List<Source> list = new ArrayList<>(11);
+        List<Source> list = new ArrayList<>(12);
         list.add(IKanman.getDefaultSource());
         list.add(Dmzj.getDefaultSource());
         list.add(HHAAZZ.getDefaultSource());
@@ -99,7 +99,7 @@ public class UpdateHelper {
         list.add(MH57.getDefaultSource());
         list.add(Dmzjv2.getDefaultSource());
         list.add(MangaNel.getDefaultSource());
-        // list.add(PuFei.getDefaultSource());
+         list.add(PuFei.getDefaultSource());
         session.getSourceDao().insertOrReplaceInTx(list);
     }
 

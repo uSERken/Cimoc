@@ -43,7 +43,7 @@ public class PuFei extends MangaParser {
     @Override
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException {
         String url = StringUtils.format("http://m.pufei.net/e/search/?searchget=1&tbname=mh&show=title,player,playadmin,bieming,pinyin,playadmin&tempid=4&keyboard=%s",
-            URLEncoder.encode(keyword, "GB2312"));
+                URLEncoder.encode(keyword, "GB2312"));
         return new Request.Builder().url(url).build();
     }
 
@@ -130,13 +130,17 @@ public class PuFei extends MangaParser {
     public List<Comic> parseCategory(String html, int page) {
         List<Comic> list = new LinkedList<>();
         Node body = new Node(html);
-        for (Node node : body.list("li > a")) {
-            String cid = node.hrefWithSplit(1);
-            String title = node.text("h3");
-            String cover = node.attr("div > img", "data-src");
-            String update = node.text("dl:eq(5) > dd");
+        for (Node node : body.list("ul#detail > li")) {
+            Node hefrNode = node.element("a");
+            String cid = hefrNode.hrefWithSplit(1);
+            String title = hefrNode.text("h3");
+            String cover = hefrNode.attr("div > img", "data-src");
             String author = node.text("dl:eq(2) > dd");
-            list.add(new Comic(TYPE, cid, title, cover, update, author));
+            String update = node.text("dl:eq(4) > dd");
+            String last = node.text("dl:eq(3) > dd");
+            Comic comic = new Comic(TYPE, cid, title, cover, update, author);
+            comic.setUpdateTo(last);
+            list.add(comic);
         }
         return list;
     }
@@ -150,24 +154,32 @@ public class PuFei extends MangaParser {
 
         @Override
         public String getFormat(String... args) {
-            return StringUtils.format("http://m.pufei.com/act/?act=list&page=%%d&catid=%s&ajax=1&order=%s",
-                args[CATEGORY_SUBJECT], args[CATEGORY_ORDER]);
+            String url = "http://m.pufei.net/";
+            if ("".equals(args[CATEGORY_SUBJECT])) {
+                url = url.concat("manhua/");
+                if ("update".equals(args[CATEGORY_ORDER])) {
+                    url = url.concat("update.html");
+                } else if ("paihang".equals(args[CATEGORY_ORDER])) {
+                    url = url.concat("paihang.html");
+                }
+            } else {
+                url = url.concat(args[CATEGORY_SUBJECT]);
+            }
+            return url;
         }
 
         @Override
         protected List<Pair<String, String>> getSubject() {
             List<Pair<String, String>> list = new ArrayList<>();
             list.add(Pair.create("全部", ""));
-            list.add(Pair.create("最近更新", "0"));
-            list.add(Pair.create("少年热血", "1"));
-            list.add(Pair.create("武侠格斗", "2"));
-            list.add(Pair.create("科幻魔幻", "3"));
-            list.add(Pair.create("竞技体育", "4"));
-            list.add(Pair.create("爆笑喜剧", "5"));
-            list.add(Pair.create("侦探推理", "6"));
-            list.add(Pair.create("恐怖灵异", "7"));
-            list.add(Pair.create("少女爱情", "8"));
-            list.add(Pair.create("恋爱生活", "9"));
+            list.add(Pair.create("少年热血", "shaonianrexue"));
+            list.add(Pair.create("武侠格斗", "wuxiagedou"));
+            list.add(Pair.create("科幻魔幻", "kehuan"));
+            list.add(Pair.create("竞技体育", "jingjitiyu"));
+            list.add(Pair.create("爆笑喜剧", "gaoxiaoxiju"));
+            list.add(Pair.create("侦探推理", "zhentantuili"));
+            list.add(Pair.create("恐怖灵异", "kongbulingyi"));
+            list.add(Pair.create("少女爱情", "shaonvaiqing"));
             return list;
         }
 
@@ -179,9 +191,8 @@ public class PuFei extends MangaParser {
         @Override
         protected List<Pair<String, String>> getOrder() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("更新", "3"));
-            list.add(Pair.create("发布", "1"));
-            list.add(Pair.create("人气", "2"));
+            list.add(Pair.create("最近更新", "update"));
+            list.add(Pair.create("漫画排行", "paihang"));
             return list;
         }
 

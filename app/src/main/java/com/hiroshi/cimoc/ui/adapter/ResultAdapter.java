@@ -37,6 +37,7 @@ public class ResultAdapter extends BaseAdapter<Comic> {
         @BindView(R.id.result_comic_author) TextView comicAuthor;
         @BindView(R.id.result_comic_update) TextView comicUpdate;
         @BindView(R.id.result_comic_source) TextView comicSource;
+        @BindView(R.id.result_comic_updateTo) TextView comicUpdateTo;
 
         ResultViewHolder(View view) {
             super(view);
@@ -62,6 +63,7 @@ public class ResultAdapter extends BaseAdapter<Comic> {
         viewHolder.comicAuthor.setText(comic.getAuthor());
         viewHolder.comicSource.setText(mTitleGetter.getTitle(comic.getSource()));
         viewHolder.comicUpdate.setText(comic.getUpdate());
+        viewHolder.comicUpdateTo.setText(comic.getUpdateTo());
         ImageRequest request = ImageRequestBuilder
                 .newBuilderWithSource(Uri.parse(comic.getCover()))
                 .setResizeOptions(new ResizeOptions(App.mCoverWidthPixels / 3, App.mCoverHeightPixels / 3))
