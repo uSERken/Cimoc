@@ -163,6 +163,7 @@ public class DetailActivity extends CoordinatorActivity implements DetailView {
         }
     }
 
+//    收藏按钮
     @OnClick(R.id.coordinator_action_button) void onActionButtonClick() {
         if (mPresenter.getComic().getFavorite() != null) {
             mPresenter.unfavoriteComic();

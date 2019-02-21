@@ -47,6 +47,12 @@ public class Comic {
         this.author = author;
     }
 
+    public Comic(int source, String cid, String title, String cover, String update, String author,String updateTo) {
+        this(null, source, cid, title, cover == null ? "" : cover, false, false, update,
+                null, null, null, null, null, null, null,updateTo);
+        this.author = author;
+    }
+
     public Comic(int source, String cid) {
         this.source = source;
         this.cid = cid;

@@ -25,7 +25,8 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/11/28.
  */
-
+//TODO 原本注销掉的
+    @Deprecated
 public class Chuiyao extends MangaParser {
 
     public static final int TYPE = 9;

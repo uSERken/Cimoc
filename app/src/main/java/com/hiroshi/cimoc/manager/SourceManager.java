@@ -7,21 +7,16 @@ import com.hiroshi.cimoc.model.Source;
 import com.hiroshi.cimoc.model.SourceDao;
 import com.hiroshi.cimoc.model.SourceDao.Properties;
 import com.hiroshi.cimoc.parser.Parser;
-import com.hiroshi.cimoc.source.CCTuku;
-import com.hiroshi.cimoc.source.Chuiyao;
 import com.hiroshi.cimoc.source.DM5;
 import com.hiroshi.cimoc.source.Dmzj;
 import com.hiroshi.cimoc.source.Dmzjv2;
-import com.hiroshi.cimoc.source.HHAAZZ;
 import com.hiroshi.cimoc.source.HHSSEE;
 import com.hiroshi.cimoc.source.IKanman;
-import com.hiroshi.cimoc.source.Locality;
+import com.hiroshi.cimoc.source.ZLocality;
 import com.hiroshi.cimoc.source.MH57;
-import com.hiroshi.cimoc.source.MangaNel;
-import com.hiroshi.cimoc.source.Null;
+import com.hiroshi.cimoc.source.ZNull;
 import com.hiroshi.cimoc.source.PuFei;
 import com.hiroshi.cimoc.source.U17;
-import com.hiroshi.cimoc.source.Webtoon;
 
 import java.util.List;
 
@@ -89,20 +84,11 @@ public class SourceManager {
                 case Dmzj.TYPE:
                     parser = new Dmzj(source);
                     break;
-                case HHAAZZ.TYPE:
-                    parser = new HHAAZZ(source);
-                    break;
-                case CCTuku.TYPE:
-                    parser = new CCTuku(source);
-                    break;
                 case U17.TYPE:
                     parser = new U17(source);
                     break;
                 case DM5.TYPE:
                     parser = new DM5(source);
-                    break;
-                case Webtoon.TYPE:
-                    parser = new Webtoon(source);
                     break;
                 case HHSSEE.TYPE:
                     parser = new HHSSEE(source);
@@ -113,17 +99,14 @@ public class SourceManager {
                 case Dmzjv2.TYPE:
                     parser = new Dmzjv2(source);
                     break;
-                case Locality.TYPE:
-                    parser = new Locality();
-                    break;
-                case MangaNel.TYPE:
-                    parser = new MangaNel(source);
+                case ZLocality.TYPE:
+                    parser = new ZLocality();
                     break;
                 case PuFei.TYPE:
                     parser = new PuFei(source);
                     break;
                 default:
-                    parser = new Null();
+                    parser = new ZNull();
                     break;
             }
             mParserArray.put(type, parser);

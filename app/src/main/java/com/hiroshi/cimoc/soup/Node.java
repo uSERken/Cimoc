@@ -28,7 +28,7 @@ public class Node {
         return new Node(element.getElementById(id));
     }
 
-    public Node element(String cssQuery){return new Node(element.select(cssQuery).first());}
+    public Node firstElement(String cssQuery){return new Node(element.select(cssQuery).first());}
 
     public List<Node> list(String cssQuery) {
         List<Node> list = new LinkedList<>();

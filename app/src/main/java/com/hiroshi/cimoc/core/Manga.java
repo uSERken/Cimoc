@@ -31,6 +31,13 @@ import rx.schedulers.Schedulers;
  */
 public class Manga {
 
+    /***
+     * 搜索页数
+     * @param parser
+     * @param keyword
+     * @param page
+     * @return
+     */
     public static Observable<Comic> getSearchResult(final Parser parser, final String keyword, final int page) {
         return Observable.create(new Observable.OnSubscribe<Comic>() {
             @Override
@@ -58,6 +65,12 @@ public class Manga {
         }).subscribeOn(Schedulers.io());
     }
 
+    /***
+     * 根据漫画基本信息获取具体页面（包括章节
+     * @param parser
+     * @param comic
+     * @return
+     */
     public static Observable<List<Chapter>> getComicInfo(final Parser parser, final Comic comic) {
         return Observable.create(new Observable.OnSubscribe<List<Chapter>>() {
             @Override
@@ -84,6 +97,13 @@ public class Manga {
         }).subscribeOn(Schedulers.io());
     }
 
+    /***
+     * 根据页数获取页漫画类容
+     * @param parser
+     * @param format
+     * @param page
+     * @return
+     */
     public static Observable<List<Comic>> getCategoryComic(final Parser parser, final String format,
                                                            final int page) {
         return Observable.create(new Observable.OnSubscribe<List<Comic>>() {
@@ -106,6 +126,13 @@ public class Manga {
         }).subscribeOn(Schedulers.io());
     }
 
+    /***
+     * 获取图片
+     * @param parser
+     * @param cid
+     * @param path
+     * @return
+     */
     public static Observable<List<ImageUrl>> getChapterImage(final Parser parser, final String cid,
                                                              final String path) {
         return Observable.create(new Observable.OnSubscribe<List<ImageUrl>>() {
@@ -132,6 +159,14 @@ public class Manga {
         }).subscribeOn(Schedulers.io());
     }
 
+    /***
+     * 根据具体的章节获取章节的图片信息
+     * @param parser
+     * @param cid
+     * @param path
+     * @return
+     * @throws InterruptedIOException
+     */
     public static List<ImageUrl> getImageUrls(Parser parser, String cid, String path) throws InterruptedIOException {
         List<ImageUrl> list = new ArrayList<>();
         Response response = null;

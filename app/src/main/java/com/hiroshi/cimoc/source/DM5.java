@@ -13,6 +13,7 @@ import com.hiroshi.cimoc.parser.SearchIterator;
 import com.hiroshi.cimoc.soup.Node;
 import com.hiroshi.cimoc.utils.DecryptionUtils;
 import com.hiroshi.cimoc.utils.StringUtils;
+import com.hiroshi.cimoc.utils.TimeUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,12 +71,13 @@ public class DM5 extends MangaParser {
                         String title = object.getString("Title");
                         String cover = object.getString("Pic");
                         String update = object.getString("LastPartTime");
+                        String updateTo = object.getString("LastUpdateInfo");
                         JSONArray array = object.optJSONArray("Author");
                         String author = "";
                         for (int i = 0; array != null && i != array.length(); ++i) {
                             author = author.concat(array.optString(i));
                         }
-                        return new Comic(TYPE, cid, title, cover, update, author);
+                        return new Comic(TYPE, cid, title, cover, update, author,updateTo);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -89,7 +91,7 @@ public class DM5 extends MangaParser {
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "http://www.dm5.com/".concat(cid);
+        String url = "http://tel.dm5.com/".concat(cid);
         return new Request.Builder().url(url).build();
     }
 
@@ -99,27 +101,7 @@ public class DM5 extends MangaParser {
         String title = body.textWithSplit("div.banner_detail_form > div.info > p.title", " ", 0);
         String cover = body.src("div.banner_detail_form > div.cover > img");
         String update = body.text("#tempc > div.detail-list-title > span.s > span");
-        if (update != null) {
-            Calendar calendar = Calendar.getInstance();
-            if (update.contains("今天") || update.contains("分钟前")) {
-                update = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
-            } else if (update.contains("昨天")) {
-                calendar.add(Calendar.DATE, -1);
-                update = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
-            } else if (update.contains("前天")) {
-                calendar.add(Calendar.DATE, -2);
-                update = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
-            } else {
-                String result = StringUtils.match("\\d+-\\d+-\\d+", update, 0);
-                if (result == null) {
-                    String[] rs = StringUtils.match("(\\d+)月(\\d+)号", update, 1, 2);
-                    if (rs != null) {
-                        result = calendar.get(Calendar.YEAR) + "-" + rs[0] + "-" + rs[1];
-                    }
-                }
-                update = result;
-            }
-        }
+        update = TimeUtils.timeAnalysis(update);
         String author = body.text("div.banner_detail_form > div.info > p.subtitle > a");
         String intro = body.text("div.banner_detail_form > div.info > p.content");
         if (intro != null) {
@@ -143,7 +125,7 @@ public class DM5 extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = "http://www.dm5.com/".concat(path);
+        String url = "http://tel.dm5.com/".concat(path);
         return new Request.Builder().url(url).build();
     }
 
@@ -153,7 +135,7 @@ public class DM5 extends MangaParser {
         String regex = "DM5_MID=(.*?);.*?DM5_CID=(.*?);.*?DM5_IMAGE_COUNT=(.*?);.*?DM5_VIEWSIGN=\"(.*?)\";.*?DM5_VIEWSIGN_DT=\"(.*?)\";";
         String[] rs = StringUtils.match(regex, html, 1, 2, 3, 4, 5);
         if (rs != null) {
-            String format = "http://www.dm5.com/m%s/chapterfun.ashx?cid=%s&page=%d&_cid=%s&_mid=%s&_dt=%s&_sign=%s";
+            String format = "http://tel.dm5.com/m%s/chapterfun.ashx?cid=%s&page=%d&_cid=%s&_mid=%s&_dt=%s&_sign=%s";
             String packed = StringUtils.match("eval(.*?)\\s*</script>", html, 1);
             if (packed != null) {
                 String key = StringUtils.match("comic=(.*?);", DecryptionUtils.evalDecrypt(packed), 1);
@@ -173,7 +155,7 @@ public class DM5 extends MangaParser {
     @Override
     public Request getLazyRequest(String url) {
         return new Request.Builder().url(url)
-                .addHeader("Referer", "http://www.dm5.com")
+                .addHeader("Referer", "http://tel.dm5.com")
                 .build();
     }
 
@@ -205,8 +187,9 @@ public class DM5 extends MangaParser {
             String title = node.text("div > h2.title > a");
             String cover = StringUtils.match("\\((.*?)\\)", node.attr("p.mh-cover", "style"), 1);
             String author = node.textWithSubstring("p.author", 3);
-            // String update = node.text("p.zl"); 要解析好麻烦
-            list.add(new Comic(TYPE, cid, title, cover, null, author));
+            String update = TimeUtils.timeAnalysis(node.text("p.zl"));
+            String updateTo = node.textWithSubstring("p.chapter", 3);
+            list.add(new Comic(TYPE, cid, title, cover, update, author, updateTo));
         }
         return list;
     }
@@ -223,7 +206,7 @@ public class DM5 extends MangaParser {
             String path = args[CATEGORY_SUBJECT].concat(" ").concat(args[CATEGORY_AREA]).concat(" ").concat(args[CATEGORY_PROGRESS])
                     .concat(" ").concat(args[CATEGORY_ORDER]).trim();
             path = path.replaceAll("\\s+", "-");
-            return StringUtils.format("http://www.dm5.com/manhua-list-%s-p%%d", path);
+            return StringUtils.format("http://tel.dm5.com/manhua-list-%s-p%%d", path);
         }
 
         @Override
@@ -302,7 +285,7 @@ public class DM5 extends MangaParser {
 
     @Override
     public Headers getHeader() {
-        return Headers.of("Referer", "http://www.dm5.com");
+        return Headers.of("Referer", "http://tel.dm5.com");
     }
 
 }

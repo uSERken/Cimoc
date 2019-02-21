@@ -12,15 +12,16 @@ import okhttp3.Headers;
 import okhttp3.Request;
 
 /**
- * Created by Hiroshi on 2017/5/21.
+ * Created by Hiroshi on 2017/3/21.
  */
 
-public class Locality extends MangaParser {
+public class ZNull extends MangaParser {
 
-    public static final int TYPE = -2;
-    public static final String DEFAULT_TITLE = "本地漫画";
+    public static final int TYPE = -1;
+    public static final String DEFAULT_TITLE = "(null)";
+    public static final String DEFAULT_SERVER = null;
 
-    public Locality() {
+    public ZNull() {
         mTitle = DEFAULT_TITLE;
     }
 

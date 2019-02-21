@@ -2,13 +2,14 @@ package com.hiroshi.cimoc.source;
 
 /**
  * Created by Hiroshi on 2016/10/5.
+ * h 翻墙
  */
-
+@Deprecated
 public class  Pic177/* extends MangaParser */{
 /*
     @Override
     public Request getSearchRequest(String keyword, int page) {
-        String url = StringUtils.format("http://www.177pic66.com/page/%d?s=%s", page, keyword);
+        String url = StringUtils.format("http://www.177pic.info/page/%d?s=%s", page, keyword);
         return new Request.Builder().url(url).build();
     }
 
@@ -33,7 +34,7 @@ public class  Pic177/* extends MangaParser */{
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "http://www.177pic66.com/html/".concat(cid);
+        String url = "http://www.177pic.info/html/".concat(cid);
         return new Request.Builder().url(url).build();
     }
 
@@ -63,7 +64,7 @@ public class  Pic177/* extends MangaParser */{
 
     @Override
     public Request getRecentRequest(int page) {
-        String url = "http://www.177pic66.com/page/" + page;
+        String url = "http://www.177pic.info/page/" + page;
         return new Request.Builder().url(url).build();
     }
 
@@ -87,7 +88,7 @@ public class  Pic177/* extends MangaParser */{
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("http://www.177pic66.com/html/%s/%s", cid, path);
+        String url = StringUtils.format("http://www.177pic.info/html/%s/%s", cid, path);
         return new Request.Builder().url(url).build();
     }
 

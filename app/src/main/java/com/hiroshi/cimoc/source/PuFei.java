@@ -32,6 +32,8 @@ public class PuFei extends MangaParser {
     public static final int TYPE = 50;
     public static final String DEFAULT_TITLE = "扑飞漫画";
 
+    private Boolean isSearchType = false;
+
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
@@ -44,23 +46,43 @@ public class PuFei extends MangaParser {
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException {
         String url = StringUtils.format("http://m.pufei.net/e/search/?searchget=1&tbname=mh&show=title,player,playadmin,bieming,pinyin,playadmin&tempid=4&keyboard=%s",
                 URLEncoder.encode(keyword, "GB2312"));
+        isSearchType = true;
         return new Request.Builder().url(url).build();
     }
 
     @Override
     public SearchIterator getSearchIterator(String html, int page) {
         Node body = new Node(html);
-        return new NodeIterator(body.list("li > a")) {
+        return new NodeIterator(body.list("ul#detail > li")) {
             @Override
             protected Comic parse(Node node) {
-                String cid = node.hrefWithSplit(1);
-                String title = node.text("h3");
-                String cover = node.attr("div > img", "data-src");
-                String update = node.text("dl:eq(5) > dd");
+                Node hrefNode = node.firstElement("a");
+                String cid = hrefNode.hrefWithSplit(1);
+                String title = hrefNode.text("h3");
+                String cover = hrefNode.attr("div > img", "data-src");
                 String author = node.text("dl:eq(2) > dd");
-                return new Comic(TYPE, cid, title, cover, update, author);
+                String update = node.text("dl:eq(4) > dd");
+                String last = node.text("dl:eq(3) > dd");
+                Comic comic = new Comic(TYPE, cid, title, cover, update, author);
+                comic.setUpdateTo(last);
+                return comic;
             }
         };
+    }
+
+    @Override
+    public Request getCategoryRequest(String format, int page) {
+        if(page > 1){
+            format = format.concat("/index_%d.html");
+        }
+//        包含manhua为更新和人气，责searchtype 为false
+        if(format.indexOf("manhua") > -1){
+            isSearchType = false;
+        }else {
+            isSearchType = true;
+        }
+        String url = StringUtils.format(format, page);
+        return new Request.Builder().url(url).build();
     }
 
     @Override
@@ -131,13 +153,20 @@ public class PuFei extends MangaParser {
         List<Comic> list = new LinkedList<>();
         Node body = new Node(html);
         for (Node node : body.list("ul#detail > li")) {
-            Node hefrNode = node.element("a");
-            String cid = hefrNode.hrefWithSplit(1);
-            String title = hefrNode.text("h3");
-            String cover = hefrNode.attr("div > img", "data-src");
+            Node hrefNode = node.firstElement("a");
+            String cid = hrefNode.hrefWithSplit(1);
+            String title = hrefNode.text("h3");
+            String cover = hrefNode.attr("div > img", "data-src");
             String author = node.text("dl:eq(2) > dd");
-            String update = node.text("dl:eq(4) > dd");
-            String last = node.text("dl:eq(3) > dd");
+            String update = null;
+            String last = null;
+            if(isSearchType){
+                update = node.text("dl:eq(5) > dd");
+                last = node.text("dl:eq(4) > dd");
+            }else{
+                update = node.text("dl:eq(4) > dd");
+                last = node.text("dl:eq(3) > dd");
+            }
             Comic comic = new Comic(TYPE, cid, title, cover, update, author);
             comic.setUpdateTo(last);
             list.add(comic);

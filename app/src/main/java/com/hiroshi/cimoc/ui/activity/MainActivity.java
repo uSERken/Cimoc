@@ -99,10 +99,10 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     protected void initData() {
         mPresenter.loadLast();
         checkUpdate();
-        showPermission();
-//        if (!showAuthorNotice()) {
-//            showPermission();
-//        }
+//        showPermission();
+        if (!showAuthorNotice()) {
+            showPermission();
+        }
     }
 
     private void initDrawerToggle() {

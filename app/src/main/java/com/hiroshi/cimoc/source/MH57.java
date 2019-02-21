@@ -26,14 +26,13 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/10/3.
  */
-
 public class MH57 extends MangaParser {
 
     public static final int TYPE = 8;
     public static final String DEFAULT_TITLE = "57漫画";
-
+//http://images.lancaier.com/ManHuaKu/H/HaiZeiWang/932/07081022413614.jpg
     private static final String[] servers = {
-            "http://images.720rs.com"
+            "http://images.lancaier.com"
     };
 
     public static Source getDefaultSource() {
@@ -46,7 +45,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Request getSearchRequest(String keyword, int page) {
-        String url = StringUtils.format("http://m.57mh.com/search/q_%s-p-%d", keyword, page);
+        String url = StringUtils.format("http://m.wuqimh.com/search/q_%s-p-%d", keyword, page);
         return new Request.Builder().url(url).build();
     }
 
@@ -68,16 +67,17 @@ public class MH57 extends MangaParser {
                 String cid = node.hrefWithSplit("a:eq(0)", 0);
                 String title = node.text("a:eq(0) > h3");
                 String cover = node.attr("a:eq(0) > div.thumb > img", "data-src");
-                String update = node.text("dl:eq(4) > dd");
                 String author = node.text("dl:eq(1) > a > dd");
-                return new Comic(TYPE, cid, title, cover, update, author);
+                String update = node.text("dl:eq(4) > dd > font");
+                String updateTo = node.text("dl:eq(3) > dd > a");
+                return new Comic(TYPE, cid, title, cover, update, author,updateTo);
             }
         };
     }
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "http://m.57mh.com/".concat(cid);
+        String url = "http://m.wuqimh.com/".concat(cid);
         return new Request.Builder().url(url).build();
     }
 
@@ -107,7 +107,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("http://m.57mh.com/%s/%s.html", cid, path);
+        String url = StringUtils.format("http://m.wuqimh.com/%s/%s.html", cid, path);
         return new Request.Builder().url(url).build();
     }
 
@@ -159,7 +159,8 @@ public class MH57 extends MangaParser {
             String title = node.attr("a", "title");
             String cover = node.attr("a > img", "data-src");
             String update = node.textWithSubstring("span.updateon", 4, 14);
-            list.add(new Comic(TYPE, cid, title, cover, update, null));
+            String updateTo = node.text("span.tt");
+            list.add(new Comic(TYPE, cid, title, cover, update, "N/A",updateTo));
         }
         return list;
     }
@@ -173,7 +174,7 @@ public class MH57 extends MangaParser {
 
         @Override
         public String getFormat(String... args) {
-            return StringUtils.format("http://www.57mh.com/list/area-%s-smid-%s-year-%s-lz-%s-order-%s-p-%%d",
+            return StringUtils.format("http://www.wuqimh.com/list/area-%s-smid-%s-year-%s-lz-%s-order-%s-p-%%d",
                     args[CATEGORY_AREA], args[CATEGORY_SUBJECT], args[CATEGORY_YEAR], args[CATEGORY_PROGRESS], args[CATEGORY_ORDER]);
         }
 
@@ -300,7 +301,7 @@ public class MH57 extends MangaParser {
 
     @Override
     public Headers getHeader() {
-        return Headers.of("Referer", "http://m.57mh.com/");
+        return Headers.of("Referer", "http://m.wuqimh.com/");
     }
 
 }

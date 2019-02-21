@@ -2,7 +2,9 @@ package com.hiroshi.cimoc.source;
 
 /**
  * Created by Hiroshi on 2016/8/9.
+ * h 翻墙
  */
+@Deprecated
 public class Wnacg/* extends MangaParser */{
 /*
     @Override

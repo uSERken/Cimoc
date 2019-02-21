@@ -15,14 +15,11 @@ Online manga reader based on Android
 # 支持网站
 - [看漫画](http://m.ikanman.com)
 - [动漫之家](http://m.dmzj.com)
-- [手机汗汗](http://hhaazz.com)
-- [CC图库](http://m.tuku.cc)
 - [有妖气](http://www.u17.com)
 - [动漫屋](http://www.dm5.com)
-- [Webtoon](http://m.webtoons.com)
 - [汗汗漫画](http://hhssee.com)
-- [57漫画](http://m.57mh.com)
-- [吹妖漫画](http://m.chuiyao.com/)
+- [57漫画](http://m.wuqimh.com)
+- [扑飞漫画](http://m.pufei.net)
 
 # 感谢以下的开源项目及作者
 - [Android Open Source Project](http://source.android.com/)
