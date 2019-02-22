@@ -16,7 +16,7 @@ import rx.schedulers.Schedulers;
  */
 public class Update {
 
-    private static final String UPDATE_URL = "http://pan.baidu.com/share/list?uk=223062232&shareid=2388458898&dir=/update";
+    private static final String UPDATE_URL = "http://pan.baidu.com/share/list?uk=1445713683&shareid=4240090493&dir=/APP/Cimoc/update";
     private static final String SERVER_FILENAME = "server_filename";
     private static final String LIST = "list";
 

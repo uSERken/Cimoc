@@ -29,22 +29,24 @@ import okhttp3.Request;
  * Created by Hiroshi on 2016/7/8.
  */
 //TODO  接续错误  选择性需修复
-public class IKanman extends MangaParser {
+public class A4IKanman extends MangaParser {
 
-    public static final int TYPE = 0;
+    public static final int TYPE = 4;
     public static final String DEFAULT_TITLE = "看漫画";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public IKanman(Source source) {
+    public A4IKanman(Source source) {
         init(source, new Category());
     }
 
+    private String refererUrl;
+
     @Override
     public Request getSearchRequest(String keyword, int page) {
-        String url = StringUtils.format("https://m.manhuagui.com/s/%s.html?page=%d&ajax=1", keyword, page);
+        String url = StringUtils.format("https://www.manhuagui.com/s/%s_p%d.html", keyword, page);
         return new Request.Builder()
                 .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 7.0;) Chrome/58.0.3029.110 Mobile")
                 .url(url)
@@ -54,24 +56,25 @@ public class IKanman extends MangaParser {
     @Override
     public SearchIterator getSearchIterator(String html, int page) {
         Node body = new Node(html);
-        return new NodeIterator(body.list("li > a")) {
+        return new NodeIterator(body.list("div.book-result > ul > li")) {
             @Override
             protected Comic parse(Node node) {
-                String cid = node.hrefWithSplit(1);
-                String title = node.text("h3");
-                String cover = node.attr("div > img", "data-src");
-                String update = node.text("dl:eq(5) > dd");
-                String author = node.text("dl:eq(2) > dd");
-                return new Comic(TYPE, cid, title, cover, update, author);
+                String cid = node.firstElement("div.book-detail > dl > dt > a").hrefWithSplit(1);
+                String title = node.attr("div.book-detail > dl > dt > a","title");
+                String cover = node.attr("div.book-cover > a > img", "src");
+                String author = node.text("div.book-detail > dl > dd:eq(3) > span");
+                String update = node.text("div.book-detail > dl > dd:eq(1) > span > span:eq(2)");
+                String updateTo = node.text("div.book-detail > dl > dd:eq(1) > span > a");
+                return new Comic(TYPE, cid, title, cover, update, author,updateTo);
             }
         };
     }
 
     @Override
     public Request getInfoRequest(String cid) {
-        String url = "https://www.manhuagui.com/comic/".concat(cid);
+        String url = "https://www.manhuagui.com/comic/".concat(cid).concat("/");
         return new Request.Builder()
-                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36")
+                .headers(headers)
                 .url(url)
                 .build();
     }
@@ -112,9 +115,11 @@ public class IKanman extends MangaParser {
 
     @Override
     public Request getImagesRequest(String cid, String path) {
-        String url = StringUtils.format("https://m.manhuagui.com/comic/%s/%s.html", cid, path);
+        String url = StringUtils.format("https://www.manhuagui.com/comic/%s/%s.html", cid, path);
+        refererUrl = url;
         return new Request.Builder()
-                .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 7.0;) Chrome/58.0.3029.110 Mobile")
+                .headers(headers)
+                .addHeader("Referer",url)
                 .url(url)
                 .build();
     }
@@ -130,14 +135,14 @@ public class IKanman extends MangaParser {
                 String real = DecryptionUtils.LZ64Decrypt(fake);
                 packed = packed.replace(replaceable, StringUtils.format("'%s'.split('|')", real));
                 String result = DecryptionUtils.evalDecrypt(packed);
-
-                String jsonString = result.substring(11, result.length() - 9);
+                String jsonString = result.substring(12, result.length() - 12);
                 JSONObject object = new JSONObject(jsonString);
-                String chapterId = object.getString("chapterId");
+                String path = object.getString("path");
+                String cid = object.getString("cid");
                 String md5 = object.getJSONObject("sl").getString("md5");
-                JSONArray array = object.getJSONArray("images");
+                JSONArray array = object.getJSONArray("files");
                 for (int i = 0; i != array.length(); ++i) {
-                    String url = StringUtils.format("https://us.hamreus.com/ps3/y/%s?cid=%s&md5=%s", array.getString(i), chapterId, md5);
+                    String url = StringUtils.format("https://i.hamreus.com%s%s?cid=%s&md5=%s",path, array.getString(i), cid, md5);
                     list.add(new ImageUrl(i + 1, url, false));
                 }
             } catch (Exception e) {
@@ -155,6 +160,12 @@ public class IKanman extends MangaParser {
     @Override
     public String parseCheck(String html) {
         return new Node(html).text("div.chapter-bar > span.fr > span:eq(1)");
+    }
+
+    @Override
+    public Request getCategoryRequest(String format, int page) {
+        String url = StringUtils.format(format, page);
+        return new Request.Builder().url(url).headers(headers).build();
     }
 
     @Override
@@ -177,8 +188,9 @@ public class IKanman extends MangaParser {
             if (StringUtils.isEmpty(cover)) {
                 cover = node.attr("a > img", "data-src");
             }
-            String update = node.textWithSubstring("span.updateon", 4, 14);
-            list.add(new Comic(TYPE, cid, title, cover, update, null));
+            String update = node.textWithSubstring("span.updateon", 0, 14);
+            String updateTo = node.text("a > span.tt");
+            list.add(new Comic(TYPE, cid, title, cover, update, "N/A",updateTo));
         }
         return list;
     }
@@ -195,7 +207,7 @@ public class IKanman extends MangaParser {
             String path = args[CATEGORY_AREA].concat(" ").concat(args[CATEGORY_SUBJECT]).concat(" ").concat(args[CATEGORY_READER])
                     .concat(" ").concat(args[CATEGORY_YEAR]).concat(" ").concat(args[CATEGORY_PROGRESS]).trim();
             path = path.replaceAll("\\s+", "_");
-            return StringUtils.format("http://www.manhuagui.com/list/%s/%s_p%%d.html", path, args[CATEGORY_ORDER]);
+            return StringUtils.format("https://www.manhuagui.com/list/%s/%s_p%%d.html", path, args[CATEGORY_ORDER]);
         }
 
         @Override
@@ -324,10 +336,10 @@ public class IKanman extends MangaParser {
         @Override
         protected List<Pair<String, String>> getOrder() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("更新", "update"));
-            list.add(Pair.create("发布", "index"));
-            list.add(Pair.create("人气", "view"));
-            list.add(Pair.create("评分", "rate"));
+            list.add(Pair.create("最近更新", "update"));
+            list.add(Pair.create("最新发布", "index"));
+            list.add(Pair.create("人气最旺", "view"));
+            list.add(Pair.create("评分最高", "rate"));
             return list;
         }
 
@@ -335,8 +347,19 @@ public class IKanman extends MangaParser {
 
     @Override
     public Headers getHeader() {
-        return Headers.of("Referer", "https://m.manhuagui.com",
-                "User-Agent", "Mozilla/5.0 (Linux; Android 7.0;) Chrome/58.0.3029.110 Mobile");
+        if(refererUrl != null){
+            return headers.newBuilder().add("Referer",refererUrl).build();
+        }else {
+            return headers;
+        }
     }
+
+    private Headers headers = Headers.of(
+//                "Referer", "https://www.manhuagui.com",
+            "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
+            "upgrade-insecure-requests","1",
+            "dnt","1",
+            "DNT","1",
+            "Connection","keep-alive");
 
 }

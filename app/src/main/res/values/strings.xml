@@ -245,7 +245,7 @@
 
     <string name="common_data_load_fail">读取数据失败</string>
     <string name="common_keyword_empty">关键字为空</string>
-    <string name="common_parse_error">解析错误</string>
+    <string name="common_parse_error">网络或解析错误，请重试</string>
     <string name="common_execute_success">操作成功</string>
     <string name="common_execute_fail">操作失败</string>
     <string name="common_operation_select">操作选择</string>

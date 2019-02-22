@@ -24,9 +24,9 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/10/1.
  */
-public class HHSSEE extends MangaParser {
+public class A3HHSSEE extends MangaParser {
 
-    public static final int TYPE = 7;
+    public static final int TYPE = 3;
     public static final String DEFAULT_TITLE = "汗汗漫画";
     private static final String IMAGE_PRE_URL = "http://104.237.58.244/dm";
     //    用于区分不同类型页面用于加载相应的解析
@@ -36,7 +36,7 @@ public class HHSSEE extends MangaParser {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public HHSSEE(Source source) {
+    public A3HHSSEE(Source source) {
         init(source, new Category());
     }
 
@@ -234,7 +234,7 @@ public class HHSSEE extends MangaParser {
         return list;
     }
 
-    private Comic comicAnalysis(Node node){
+    private Comic comicAnalysis(Node node) {
         List<Node> aNodes = node.list("a");
         Node titleNode = aNodes.get(0);
         String cid = titleNode.href();
@@ -255,7 +255,7 @@ public class HHSSEE extends MangaParser {
         if (updateTo != null) {
             updateTo = updateTo.substring(1, updateTo.length() - 1);
         }
-       return new Comic(TYPE, cid, title, cover, update, author, updateTo);
+        return new Comic(TYPE, cid, title, cover, update, author, updateTo);
     }
 
     private static class Category extends MangaCategory {

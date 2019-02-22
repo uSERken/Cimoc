@@ -26,9 +26,9 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/10/3.
  */
-public class MH57 extends MangaParser {
+public class A5MH57 extends MangaParser {
 
-    public static final int TYPE = 8;
+    public static final int TYPE = 5;
     public static final String DEFAULT_TITLE = "57漫画";
 //http://images.lancaier.com/ManHuaKu/H/HaiZeiWang/932/07081022413614.jpg
     private static final String[] servers = {
@@ -39,7 +39,7 @@ public class MH57 extends MangaParser {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public MH57(Source source) {
+    public A5MH57(Source source) {
         init(source, new Category());
     }
 
@@ -54,7 +54,7 @@ public class MH57 extends MangaParser {
         Node body = new Node(html);
         for (Node node : body.list("div.book-result > div.pager-cont > span.pager > span.current")) {
             try {
-                if (Integer.parseInt(node.text()) < page) {
+                if (!node.text().contains("上一页") && !node.text().contains("下一页")  && Integer.parseInt(node.text()) < page) {
                     return null;
                 }
             } catch (NumberFormatException e) {
@@ -147,7 +147,7 @@ public class MH57 extends MangaParser {
         Node body = new Node(html);
         for (Node node : body.list("span.pager > span.current")) {
             try {
-                if (Integer.parseInt(node.text()) < page) {
+                if (!node.text().contains("上一页") && Integer.parseInt(node.text()) < page) {
                     return list;
                 }
             } catch (NumberFormatException e) {
@@ -158,7 +158,7 @@ public class MH57 extends MangaParser {
             String cid = node.hrefWithSplit("a", 0);
             String title = node.attr("a", "title");
             String cover = node.attr("a > img", "data-src");
-            String update = node.textWithSubstring("span.updateon", 4, 14);
+            String update = node.textWithSubstring("span.updateon", 0,14);
             String updateTo = node.text("span.tt");
             list.add(new Comic(TYPE, cid, title, cover, update, "N/A",updateTo));
         }
@@ -181,7 +181,7 @@ public class MH57 extends MangaParser {
         @Override
         public List<Pair<String, String>> getSubject() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("全部", ""));
+            list.add(Pair.create("全部", "-"));
             list.add(Pair.create("热血", "1"));
             list.add(Pair.create("武侠", "2"));
             list.add(Pair.create("搞笑", "3"));
@@ -290,10 +290,10 @@ public class MH57 extends MangaParser {
         @Override
         protected List<Pair<String, String>> getOrder() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("更新", "addtime"));
-            list.add(Pair.create("发布", "id"));
-            list.add(Pair.create("人气", "hits"));
-            list.add(Pair.create("评分", "gold"));
+            list.add(Pair.create("最近更新", "addtime"));
+            list.add(Pair.create("最新发布", "id"));
+            list.add(Pair.create("人气最旺", "hits"));
+            list.add(Pair.create("评分最高", "gold"));
             return list;
         }
 

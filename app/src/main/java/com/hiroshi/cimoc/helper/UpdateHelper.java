@@ -5,14 +5,15 @@ import com.hiroshi.cimoc.model.Comic;
 import com.hiroshi.cimoc.model.ComicDao;
 import com.hiroshi.cimoc.model.DaoSession;
 import com.hiroshi.cimoc.model.Source;
-import com.hiroshi.cimoc.source.DM5;
-import com.hiroshi.cimoc.source.Dmzj;
-import com.hiroshi.cimoc.source.Dmzjv2;
-import com.hiroshi.cimoc.source.HHSSEE;
-import com.hiroshi.cimoc.source.IKanman;
-import com.hiroshi.cimoc.source.MH57;
-import com.hiroshi.cimoc.source.PuFei;
-import com.hiroshi.cimoc.source.U17;
+import com.hiroshi.cimoc.source.A2DM5;
+import com.hiroshi.cimoc.source.A7Dmzj;
+import com.hiroshi.cimoc.source.A1PuFei;
+import com.hiroshi.cimoc.source.A8Dmzjv2;
+import com.hiroshi.cimoc.source.A3HHSSEE;
+import com.hiroshi.cimoc.source.A4IKanman;
+import com.hiroshi.cimoc.source.A5MH57;
+import com.hiroshi.cimoc.source.A0TuHaoMH;
+import com.hiroshi.cimoc.source.A6U17;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class UpdateHelper {
 //                case 10404002:
 //                case 10404003:
 //                case 10405000:
-//                    session.getSourceDao().insert(Dmzjv2.getDefaultSource());
+//                    session.getSourceDao().insert(A8Dmzjv2.getDefaultSource());
 //                case 10406000:
 //                case 10407000:
 //                case 10408000:
@@ -53,7 +54,7 @@ public class UpdateHelper {
 //                case 10408007:
 //                    // 删除 Chuiyao
 //                    session.getDatabase().execSQL("DELETE FROM SOURCE WHERE \"TYPE\" = 9");
-//                    // session.getSourceDao().insert(PuFei.getDefaultSource());
+//                    // session.getSourceDao().insert(A1PuFei.getDefaultSource());
 //            }
 //            manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
 //        }
@@ -100,14 +101,15 @@ public class UpdateHelper {
     private static void updateSource(DaoSession session) {
         session.getSourceDao().deleteAll();
         List<Source> list = new ArrayList<>();
-        list.add(IKanman.getDefaultSource());
-        list.add(Dmzj.getDefaultSource());
-        list.add(U17.getDefaultSource());
-        list.add(DM5.getDefaultSource());
-        list.add(HHSSEE.getDefaultSource());
-        list.add(MH57.getDefaultSource());
-        list.add(Dmzjv2.getDefaultSource());
-        list.add(PuFei.getDefaultSource());
+        list.add(A0TuHaoMH.getDefaultSource());
+        list.add(A1PuFei.getDefaultSource());
+        list.add(A2DM5.getDefaultSource());
+        list.add(A3HHSSEE.getDefaultSource());
+        list.add(A4IKanman.getDefaultSource());
+        list.add(A5MH57.getDefaultSource());
+//        list.add(A6U17.getDefaultSource());
+        list.add(A7Dmzj.getDefaultSource());
+        list.add(A8Dmzjv2.getDefaultSource());
         session.getSourceDao().insertOrReplaceInTx(list);
     }
 

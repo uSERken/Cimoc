@@ -146,6 +146,7 @@ public class MainActivity extends BaseActivity implements MainView, NavigationVi
     }
 
     private void initFragment() {
+        System.setProperty("http.keepAlive", "false");
         int home = mPreference.getInt(PreferenceManager.PREF_OTHER_LAUNCH, PreferenceManager.HOME_FAVORITE);
         switch (home) {
             default:

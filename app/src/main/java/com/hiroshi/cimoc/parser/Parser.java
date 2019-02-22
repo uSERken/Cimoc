@@ -3,9 +3,9 @@ package com.hiroshi.cimoc.parser;
 import com.hiroshi.cimoc.model.Chapter;
 import com.hiroshi.cimoc.model.Comic;
 import com.hiroshi.cimoc.model.ImageUrl;
-import com.hiroshi.cimoc.source.DM5;
-import com.hiroshi.cimoc.source.HHSSEE;
-import com.hiroshi.cimoc.source.IKanman;
+import com.hiroshi.cimoc.source.A2DM5;
+import com.hiroshi.cimoc.source.A3HHSSEE;
+import com.hiroshi.cimoc.source.A4IKanman;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -69,9 +69,9 @@ public interface Parser {
 
     /**
      * 解析图片列表，若为惰性加载，则 {@link ImageUrl#lazy} 为 true
-     * 惰性加载的情况，一次性不能拿到所有图片链接，例如网站使用了多次异步请求 {@link DM5#parseImages}，或需要跳转到不同页面
-     * 才能获取 {@link HHSSEE#parseImages}，这些情况一般可以根据页码构造出相应的请求链接，到阅读时再解析
-     * 支持多个链接 {@link ImageUrl#urls}，例如 {@link IKanman#parseImages}
+     * 惰性加载的情况，一次性不能拿到所有图片链接，例如网站使用了多次异步请求 {@link A2DM5#parseImages}，或需要跳转到不同页面
+     * 才能获取 {@link A3HHSSEE#parseImages}，这些情况一般可以根据页码构造出相应的请求链接，到阅读时再解析
+     * 支持多个链接 {@link ImageUrl#urls}，例如 {@link A4IKanman#parseImages}
      * @param html 页面源代码
      */
     List<ImageUrl> parseImages(String html);

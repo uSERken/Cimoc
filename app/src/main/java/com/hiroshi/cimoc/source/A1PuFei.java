@@ -19,35 +19,76 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by FEILONG on 2017/12/21.
  */
 
-public class PuFei extends MangaParser {
+public class A1PuFei extends MangaParser {
 
-    public static final int TYPE = 50;
+    public static final int TYPE = 1;
     public static final String DEFAULT_TITLE = "扑飞漫画";
 
     private Boolean isSearchType = false;
+
+    private static final String searchUrl = "http://m.pufei.net/e/search/result/?searchid=";
+
+    private OkHttpClient searchClient = new OkHttpClient.Builder()
+            .connectTimeout(3000, TimeUnit.MILLISECONDS)
+            .readTimeout(3000, TimeUnit.MILLISECONDS)
+            .build();
+
+    private Map<String, String> searchCache = new ConcurrentHashMap<>();
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public PuFei(Source source) {
-        init(source, new PuFei.Category());
+    public A1PuFei(Source source) {
+        init(source, new A1PuFei.Category());
     }
 
     @Override
     public Request getSearchRequest(String keyword, int page) throws UnsupportedEncodingException {
-        String url = StringUtils.format("http://m.pufei.net/e/search/?searchget=1&tbname=mh&show=title,player,playadmin,bieming,pinyin,playadmin&tempid=4&keyboard=%s",
-                URLEncoder.encode(keyword, "GB2312"));
         isSearchType = true;
-        return new Request.Builder().url(url).build();
+        String preUrl = searchUrl(keyword).concat("&page=").concat(String.valueOf(page));
+        return new Request.Builder().url(preUrl).build();
+    }
+
+    private String searchUrl(String search) throws UnsupportedEncodingException {
+        String result = searchCache.get(search);
+        if (result != null) {
+            return result;
+        }
+        String url = StringUtils.format("http://m.pufei.net/e/search/?searchget=1&tbname=mh&show=title,player,playadmin,bieming,pinyin,playadmin&tempid=4&keyboard=%s",
+                URLEncoder.encode(search, "GB2312"));
+        Request request = new Request.Builder().url(url).build();
+        Response response = null;
+        try {
+            response = searchClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                HttpUrl httpUrl = response.request().url();
+                String searchId = httpUrl.queryParameter("searchid");
+                result = searchUrl + searchId;
+                searchCache.put(search, result);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (response != null) {
+                response.close();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -72,13 +113,13 @@ public class PuFei extends MangaParser {
 
     @Override
     public Request getCategoryRequest(String format, int page) {
-        if(page > 1){
+        if (page > 1) {
             format = format.concat("/index_%d.html");
         }
 //        包含manhua为更新和人气，责searchtype 为false
-        if(format.indexOf("manhua") > -1){
+        if (format.indexOf("manhua") > -1) {
             isSearchType = false;
-        }else {
+        } else {
             isSearchType = true;
         }
         String url = StringUtils.format(format, page);
@@ -160,10 +201,10 @@ public class PuFei extends MangaParser {
             String author = node.text("dl:eq(2) > dd");
             String update = null;
             String last = null;
-            if(isSearchType){
+            if (isSearchType) {
                 update = node.text("dl:eq(5) > dd");
                 last = node.text("dl:eq(4) > dd");
-            }else{
+            } else {
                 update = node.text("dl:eq(4) > dd");
                 last = node.text("dl:eq(3) > dd");
             }

@@ -30,16 +30,16 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/7/8.
  */
-public class Dmzjv2 extends MangaParser {
+public class A8Dmzjv2 extends MangaParser {
 
-    public static final int TYPE = 10;
+    public static final int TYPE = 8;
     public static final String DEFAULT_TITLE = "动漫之家v2";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public Dmzjv2(Source source) {
+    public A8Dmzjv2(Source source) {
         init(source, new Category());
     }
 
@@ -63,7 +63,8 @@ public class Dmzjv2 extends MangaParser {
                         String title = object.getString("title");
                         String cover = object.getString("cover");
                         String author = object.optString("authors");
-                        return new Comic(TYPE, cid, title, cover, null, author);
+                        String updateTo = object.optString("last_name");
+                        return new Comic(TYPE, cid, title, cover, null, author,updateTo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -164,7 +165,8 @@ public class Dmzjv2 extends MangaParser {
                     Long time = object.has("last_updatetime") ? object.getLong("last_updatetime") * 1000 : null;
                     String update = time == null ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(time));
                     String author = object.optString("authors");
-                    list.add(new Comic(TYPE, cid, title, cover, update, author));
+                    String updateTo = object.optString("last_name");
+                    list.add(new Comic(TYPE, cid, title, cover, update, author,updateTo));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

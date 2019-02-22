@@ -2,6 +2,7 @@ package com.hiroshi.cimoc.source;
 
 import android.util.Pair;
 
+import com.hiroshi.cimoc.core.Local;
 import com.hiroshi.cimoc.model.Chapter;
 import com.hiroshi.cimoc.model.Comic;
 import com.hiroshi.cimoc.model.ImageUrl;
@@ -29,16 +30,16 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/7/8.
  */
-public class Dmzj extends MangaParser {
+public class A7Dmzj extends MangaParser {
 
-    public static final int TYPE = 1;
+    public static final int TYPE = 7;
     public static final String DEFAULT_TITLE = "动漫之家";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public Dmzj(Source source) {
+    public A7Dmzj(Source source) {
         init(source, new Category());
     }
 
@@ -65,7 +66,8 @@ public class Dmzj extends MangaParser {
                         long time = object.getLong("last_updatetime") * 1000;
                         String update = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(time));
                         String author = object.optString("authors");
-                        return new Comic(TYPE, cid, title, cover, update, author);
+                        String updateTo = object.getString("last_update_chapter_name");
+                        return new Comic(TYPE, cid, title, cover, update, author,updateTo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -180,7 +182,8 @@ public class Dmzj extends MangaParser {
                         Long time = object.has("last_updatetime") ? object.getLong("last_updatetime") * 1000 : null;
                         String update = time == null ? null : new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(time));
                         String author = object.optString("authors");
-                        list.add(new Comic(TYPE, cid, title, cover, update, author));
+                        String updateTo = object.getString("last_update_chapter_name");
+                        list.add(new Comic(TYPE, cid, title, cover, update, author,updateTo));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

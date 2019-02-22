@@ -28,17 +28,19 @@ import okhttp3.RequestBody;
 
 /**
  * Created by Hiroshi on 2016/8/8.
+ * 不使用了
  */
-public class U17 extends MangaParser {
+@Deprecated
+public class A6U17 extends MangaParser {
 
-    public static final int TYPE = 4;
+    public static final int TYPE = 6;
     public static final String DEFAULT_TITLE = "有妖气";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public U17(Source source) {
+    public A6U17(Source source) {
         init(source, new Category());
     }
 

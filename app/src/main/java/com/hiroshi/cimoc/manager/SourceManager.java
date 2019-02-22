@@ -7,16 +7,17 @@ import com.hiroshi.cimoc.model.Source;
 import com.hiroshi.cimoc.model.SourceDao;
 import com.hiroshi.cimoc.model.SourceDao.Properties;
 import com.hiroshi.cimoc.parser.Parser;
-import com.hiroshi.cimoc.source.DM5;
-import com.hiroshi.cimoc.source.Dmzj;
-import com.hiroshi.cimoc.source.Dmzjv2;
-import com.hiroshi.cimoc.source.HHSSEE;
-import com.hiroshi.cimoc.source.IKanman;
+import com.hiroshi.cimoc.source.A2DM5;
+import com.hiroshi.cimoc.source.A7Dmzj;
+import com.hiroshi.cimoc.source.A1PuFei;
+import com.hiroshi.cimoc.source.A8Dmzjv2;
+import com.hiroshi.cimoc.source.A3HHSSEE;
+import com.hiroshi.cimoc.source.A4IKanman;
+import com.hiroshi.cimoc.source.A0TuHaoMH;
 import com.hiroshi.cimoc.source.ZLocality;
-import com.hiroshi.cimoc.source.MH57;
+import com.hiroshi.cimoc.source.A5MH57;
 import com.hiroshi.cimoc.source.ZNull;
-import com.hiroshi.cimoc.source.PuFei;
-import com.hiroshi.cimoc.source.U17;
+import com.hiroshi.cimoc.source.A6U17;
 
 import java.util.List;
 
@@ -78,32 +79,35 @@ public class SourceManager {
         if (parser == null) {
             Source source = load(type);
             switch (type) {
-                case IKanman.TYPE:
-                    parser = new IKanman(source);
+                case A0TuHaoMH.TYPE:
+                    parser = new A0TuHaoMH(source);
                     break;
-                case Dmzj.TYPE:
-                    parser = new Dmzj(source);
+                case A1PuFei.TYPE:
+                    parser = new A1PuFei(source);
                     break;
-                case U17.TYPE:
-                    parser = new U17(source);
+                case A2DM5.TYPE:
+                    parser = new A2DM5(source);
                     break;
-                case DM5.TYPE:
-                    parser = new DM5(source);
+                case A3HHSSEE.TYPE:
+                    parser = new A3HHSSEE(source);
                     break;
-                case HHSSEE.TYPE:
-                    parser = new HHSSEE(source);
+                case A4IKanman.TYPE:
+                    parser = new A4IKanman(source);
                     break;
-                case MH57.TYPE:
-                    parser = new MH57(source);
+                case A5MH57.TYPE:
+                    parser = new A5MH57(source);
                     break;
-                case Dmzjv2.TYPE:
-                    parser = new Dmzjv2(source);
+                case A6U17.TYPE:
+                    parser = new A6U17(source);
+                    break;
+                case A7Dmzj.TYPE:
+                    parser = new A7Dmzj(source);
+                    break;
+                case A8Dmzjv2.TYPE:
+                    parser = new A8Dmzjv2(source);
                     break;
                 case ZLocality.TYPE:
                     parser = new ZLocality();
-                    break;
-                case PuFei.TYPE:
-                    parser = new PuFei(source);
                     break;
                 default:
                     parser = new ZNull();

@@ -263,8 +263,8 @@ public class Manga {
             @Override
             public void call(Subscriber<? super Comic> subscriber) {
                 OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(1500, TimeUnit.MILLISECONDS)
-                        .readTimeout(1500, TimeUnit.MILLISECONDS)
+                        .connectTimeout(3000, TimeUnit.MILLISECONDS)
+                        .readTimeout(3000, TimeUnit.MILLISECONDS)
                         .build();
                 for (Comic comic : list) {
                     Parser parser = manager.getParser(comic.getSource());

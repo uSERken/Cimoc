@@ -19,14 +19,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -36,16 +31,16 @@ import okhttp3.RequestBody;
 /**
  * Created by Hiroshi on 2016/8/25.
  */
-public class DM5 extends MangaParser {
+public class A2DM5 extends MangaParser {
 
-    public static final int TYPE = 5;
+    public static final int TYPE = 2;
     public static final String DEFAULT_TITLE = "动漫屋";
 
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }
 
-    public DM5(Source source) {
+    public A2DM5(Source source) {
         init(source, new Category());
     }
 
@@ -55,6 +50,7 @@ public class DM5 extends MangaParser {
         RequestBody body = new FormBody.Builder()
                 .add("t", "7")
                 .add("pageindex", String.valueOf(page))
+                .add("f", "0")
                 .add("title", keyword)
                 .build();
         return new Request.Builder().url(url).post(body).addHeader("Referer", "http://m.dm5.com").build();
@@ -77,7 +73,7 @@ public class DM5 extends MangaParser {
                         for (int i = 0; array != null && i != array.length(); ++i) {
                             author = author.concat(array.optString(i));
                         }
-                        return new Comic(TYPE, cid, title, cover, update, author,updateTo);
+                        return new Comic(TYPE, cid, title, cover, update, author, updateTo);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -113,12 +109,11 @@ public class DM5 extends MangaParser {
 
     @Override
     public List<Chapter> parseChapter(String html) {
-        Set<Chapter> set = new LinkedHashSet<>();
+        List<Chapter> set = new ArrayList<>();
         Node body = new Node(html);
         for (Node node : body.list("#chapterlistload > ul  li > a")) {
-            String title = StringUtils.split(node.text(), " ", 0);
             String path = node.hrefWithSplit(0);
-            set.add(new Chapter(title, path));
+            set.add(new Chapter(node.text(), path));
         }
         return new LinkedList<>(set);
     }
@@ -178,6 +173,13 @@ public class DM5 extends MangaParser {
         return new Node(html).textWithSubstring("#mhinfo > div.innr9 > div.innr90 > div.innr92 > span:eq(9)", 5, -10);
     }
 
+
+    @Override
+    public Request getCategoryRequest(String format, int page) {
+        String url = StringUtils.format(format, page);
+        return new Request.Builder().url(url).build();
+    }
+
     @Override
     public List<Comic> parseCategory(String html, int page) {
         List<Comic> list = new ArrayList<>();
@@ -203,8 +205,12 @@ public class DM5 extends MangaParser {
 
         @Override
         public String getFormat(String... args) {
-            String path = args[CATEGORY_SUBJECT].concat(" ").concat(args[CATEGORY_AREA]).concat(" ").concat(args[CATEGORY_PROGRESS])
-                    .concat(" ").concat(args[CATEGORY_ORDER]).trim();
+            String path = args[CATEGORY_AREA].concat(" ")
+                    .concat(args[CATEGORY_SUBJECT]).concat(" ")
+                    .concat(args[CATEGORY_READER]).concat(" ")
+                    .concat("pay0").concat(" ")
+                    .concat(args[CATEGORY_PROGRESS]).concat(" ")
+                    .concat(args[CATEGORY_ORDER]).trim();
             path = path.replaceAll("\\s+", "-");
             return StringUtils.format("http://tel.dm5.com/manhua-list-%s-p%%d", path);
         }
@@ -249,7 +255,7 @@ public class DM5 extends MangaParser {
             list.add(Pair.create("港台", "area35"));
             list.add(Pair.create("日韩", "area36"));
             list.add(Pair.create("内地", "area37"));
-            list.add(Pair.create("欧美", "area38"));
+            list.add(Pair.create("欧美", "area52"));
             return list;
         }
 
@@ -267,6 +273,22 @@ public class DM5 extends MangaParser {
             return list;
         }
 
+
+        @Override
+        public boolean hasReader() {
+            return true;
+        }
+
+        @Override
+        protected List<Pair<String, String>> getReader() {
+            List<Pair<String, String>> list = new ArrayList<>();
+            list.add(Pair.create("全部", ""));
+            list.add(Pair.create("少年向", "group1"));
+            list.add(Pair.create("少女向", "group2"));
+            list.add(Pair.create("青年向", "group3"));
+            return list;
+        }
+
         @Override
         protected boolean hasOrder() {
             return true;
@@ -275,8 +297,8 @@ public class DM5 extends MangaParser {
         @Override
         protected List<Pair<String, String>> getOrder() {
             List<Pair<String, String>> list = new ArrayList<>();
-            list.add(Pair.create("更新", "s2"));
-            list.add(Pair.create("人气", ""));
+            list.add(Pair.create("热门人气", ""));
+            list.add(Pair.create("更新时间", "s2"));
             list.add(Pair.create("新品上架", "s18"));
             return list;
         }
