@@ -35,6 +35,8 @@ public class A7Dmzj extends MangaParser {
     public static final int TYPE = 7;
     public static final String DEFAULT_TITLE = "动漫之家";
 
+    private int page = 1;
+
     public static Source getDefaultSource() {
         return new Source(null, DEFAULT_TITLE, TYPE, true);
     }

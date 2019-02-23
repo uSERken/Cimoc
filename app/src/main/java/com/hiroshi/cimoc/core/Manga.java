@@ -21,7 +21,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
@@ -171,7 +170,7 @@ public class Manga {
         List<ImageUrl> list = new ArrayList<>();
         Response response = null;
         try {
-            Request request  = parser.getImagesRequest(cid, path);
+            Request request = parser.getImagesRequest(cid, path);
             response = App.getHttpClient().newCall(request).execute();
             if (response.isSuccessful()) {
                 list.addAll(parser.parseImages(response.body().string()));
@@ -257,6 +256,12 @@ public class Manga {
         }).subscribeOn(Schedulers.io());
     }
 
+    /***
+     * 检查更新
+     * @param manager
+     * @param list
+     * @return
+     */
     public static Observable<Comic> checkUpdate(
             final SourceManager manager, final List<Comic> list) {
         return Observable.create(new Observable.OnSubscribe<Comic>() {
@@ -269,6 +274,9 @@ public class Manga {
                 for (Comic comic : list) {
                     Parser parser = manager.getParser(comic.getSource());
                     Request request = parser.getCheckRequest(comic.getCid());
+                    if (request == null) {
+                        parser.getInfoRequest(comic.getCid());
+                    }
                     try {
                         String update = parser.parseCheck(getResponseBody(client, request));
                         if (comic.getUpdate() != null && update != null && !comic.getUpdate().equals(update)) {
@@ -279,6 +287,7 @@ public class Manga {
                             continue;
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                     subscriber.onNext(null);
                 }
@@ -291,7 +300,7 @@ public class Manga {
         Response response = null;
         try {
             response = client.newCall(request).execute();
-            if (response.isSuccessful()) {
+            if (response != null && response.isSuccessful()) {
                 byte[] bodybytes = response.body().bytes();
                 String body = new String(bodybytes);
                 if (body.indexOf("charset=gb2312") != -1) {
@@ -309,8 +318,10 @@ public class Manga {
         throw new NetworkErrorException();
     }
 
-    public static class ParseErrorException extends Exception {}
+    public static class ParseErrorException extends Exception {
+    }
 
-    public static class NetworkErrorException extends Exception {}
+    public static class NetworkErrorException extends Exception {
+    }
 
 }

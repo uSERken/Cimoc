@@ -38,7 +38,7 @@ public class GridAdapter extends BaseAdapter<MiniComic> {
         @BindView(R.id.item_grid_image) SimpleDraweeView comicImage;
         @BindView(R.id.item_grid_title) TextView comicTitle;
         @BindView(R.id.item_grid_subtitle) TextView comicSource;
-        @BindView(R.id.item_grid_symbol) View comicHighlight;
+        @BindView(R.id.item_grid_symbol) TextView comicHighlight;
 
         GridHolder(View view) {
             super(view);

@@ -42,6 +42,11 @@ public class A0TuHaoMH extends MangaParser {
 
 
     @Override
+    public String parseCheck(String html) {
+        return new Node(html).textWithSubstring("div.banner_detail_form > div.info > p.tip > span:eq(2)", 5);
+    }
+
+    @Override
     public Request getCategoryRequest(String format, int page) {
         String url = StringUtils.format(format, page);
         return new Request.Builder().url(url).build();
@@ -79,7 +84,16 @@ public class A0TuHaoMH extends MangaParser {
         String author = body.textWithSubstring("div.banner_detail_form > div.info > p.subtitle", 3);
         String intro = body.text("div.banner_detail_form > div.info > p.content");
         boolean status = isFinish(body.text("div.banner_detail_form > div.info > p.tip > span:eq(0)"));
+        List<Node> nodes = body.list("#chapterlistload > ul").get(0).list("li");
+        List<Chapter> chapters = new ArrayList<>();
+        addChapterItem(chapters, nodes);
+        String updateTo = null;
+        if(!chapters.isEmpty()){
+            updateTo = chapters .get(0).getTitle();
+        }
         comic.setInfo(title, cover, update, intro, author, status);
+        comic.setUpdateTo(updateTo);
+
     }
 
     @Override

@@ -56,6 +56,7 @@ public class DetailPresenter extends BasePresenter<DetailView> {
                     mComic.setPage(comic.getPage());
                     mComic.setLast(comic.getLast());
                     mComic.setChapter(comic.getChapter());
+                    mComic.setUpdateTo(comic.getUpdateTo());
                     mBaseView.onLastChange(mComic.getLast());
                 }
             }

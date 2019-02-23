@@ -142,6 +142,7 @@ public class A1PuFei extends MangaParser {
         String intro = body.text("#bookIntro");
         boolean status = isFinish(body.text("div.book-detail > div.cont-list > div.thumb > i"));
         comic.setInfo(title, cover, update, intro, author, status);
+
     }
 
     @Override
@@ -208,9 +209,7 @@ public class A1PuFei extends MangaParser {
                 update = node.text("dl:eq(4) > dd");
                 last = node.text("dl:eq(3) > dd");
             }
-            Comic comic = new Comic(TYPE, cid, title, cover, update, author);
-            comic.setUpdateTo(last);
-            list.add(comic);
+            list.add(new Comic(TYPE, cid, title, cover, update, author,last));
         }
         return list;
     }

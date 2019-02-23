@@ -24,12 +24,26 @@ import java.util.List;
 
 public class UpdateHelper {
 
-    // 1.05.00.000
-    private static final int VERSION = 10500000;
+    // 1.5.0.0
+    private static final int VERSION = 105000;
+
+    private static final int START_VERSION = 105000;
 
     public static void update(PreferenceManager manager, final DaoSession session) {
         int version = manager.getInt(PreferenceManager.PREF_APP_VERSION, 0);
-        System.out.println("上一版本: "+version);
+        if(version < START_VERSION && VERSION == START_VERSION){
+            initSource(session);
+            manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
+        }else if(version < VERSION){
+            //            switch (version) {
+//                case 10404000:
+//                updateTable(session);
+//                    break;
+//                default:
+//                        break;
+//            }
+            manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
+        }
 //        if (version != VERSION) {
 //            switch (version) {
 //                case 0:
@@ -58,17 +72,7 @@ public class UpdateHelper {
 //            }
 //            manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
 //        }
-        if(version < VERSION){
-            switch (version) {
-                case 10404000:
-                    updateTable(session);
-                    break;
-                    default:
-                        break;
-            }
-            manager.putInt(PreferenceManager.PREF_APP_VERSION, VERSION);
-        }
-        updateSource(session);
+
     }
 
     private static void updateTable(final DaoSession session){
@@ -98,7 +102,7 @@ public class UpdateHelper {
     /**
      * 初始化图源
      */
-    private static void updateSource(DaoSession session) {
+    private static void initSource(DaoSession session) {
         session.getSourceDao().deleteAll();
         List<Source> list = new ArrayList<>();
         list.add(A0TuHaoMH.getDefaultSource());
@@ -107,7 +111,6 @@ public class UpdateHelper {
         list.add(A3HHSSEE.getDefaultSource());
         list.add(A4IKanman.getDefaultSource());
         list.add(A5MH57.getDefaultSource());
-//        list.add(A6U17.getDefaultSource());
         list.add(A7Dmzj.getDefaultSource());
         list.add(A8Dmzjv2.getDefaultSource());
         session.getSourceDao().insertOrReplaceInTx(list);

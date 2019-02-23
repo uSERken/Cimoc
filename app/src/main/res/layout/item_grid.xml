@@ -2,6 +2,7 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="140dp"
     android:clickable="true"
@@ -11,14 +12,37 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         fresco:actualImageScaleType="centerCrop"/>
+
     <View
-        android:id="@+id/item_grid_symbol"
+        android:id="@+id/item_grid_symbol1"
         android:layout_width="14dp"
         android:layout_height="14dp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="?attr/colorAccent"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/item_grid_symbol"
+        android:layout_width="42dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/shape"
+        android:gravity="center"
+        android:text="@string/updateName"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:textStyle="bold"
         android:visibility="invisible"
-        android:background="?attr/colorAccent"/>
+        fresco:fontFamily="sans-serif"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -44,4 +68,5 @@
             android:maxLines="1"
             android:textSize="12sp"/>
     </LinearLayout>
+
 </RelativeLayout>

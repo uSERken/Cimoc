@@ -90,7 +90,7 @@ public interface Parser {
     String parseLazy(String html, String url);
 
     /**
-     * 检查更新的 HTTP 请求，一般与 {@link #getInfoRequest} 相同
+     * 检查更新的 HTTP 请求，一般默认使用与 {@link #getInfoRequest} 相同
      * @param cid 漫画 ID
      */
     Request getCheckRequest(String cid);
