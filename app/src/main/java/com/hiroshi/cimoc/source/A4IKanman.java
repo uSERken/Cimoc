@@ -28,7 +28,6 @@ import okhttp3.Request;
 /**
  * Created by Hiroshi on 2016/7/8.
  */
-//TODO  接续错误  选择性需修复
 public class A4IKanman extends MangaParser {
 
     public static final int TYPE = 4;

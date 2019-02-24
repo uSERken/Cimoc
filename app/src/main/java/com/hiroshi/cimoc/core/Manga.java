@@ -7,6 +7,7 @@ import com.hiroshi.cimoc.model.Comic;
 import com.hiroshi.cimoc.model.ImageUrl;
 import com.hiroshi.cimoc.parser.Parser;
 import com.hiroshi.cimoc.parser.SearchIterator;
+import com.hiroshi.cimoc.threadpool.ThreadPoolHelp;
 
 import org.json.JSONArray;
 
@@ -14,6 +15,7 @@ import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.FormBody;
@@ -29,6 +31,16 @@ import rx.schedulers.Schedulers;
  * Created by Hiroshi on 2016/8/20.
  */
 public class Manga {
+
+    private static ExecutorService favoriteExecutorService = ThreadPoolHelp.Builder
+            .cached()
+            .name("favorite-update")
+            .builder();
+
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(3000, TimeUnit.MILLISECONDS)
+            .readTimeout(3000, TimeUnit.MILLISECONDS)
+            .build();
 
     /***
      * 搜索页数
@@ -266,16 +278,12 @@ public class Manga {
             final SourceManager manager, final List<Comic> list) {
         return Observable.create(new Observable.OnSubscribe<Comic>() {
             @Override
-            public void call(Subscriber<? super Comic> subscriber) {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .connectTimeout(3000, TimeUnit.MILLISECONDS)
-                        .readTimeout(3000, TimeUnit.MILLISECONDS)
-                        .build();
-                for (Comic comic : list) {
+            public void call(final Subscriber<? super Comic> subscriber) {
+                for (final Comic comic : list) {
                     Parser parser = manager.getParser(comic.getSource());
                     Request request = parser.getCheckRequest(comic.getCid());
                     if (request == null) {
-                        parser.getInfoRequest(comic.getCid());
+                        request = parser.getInfoRequest(comic.getCid());
                     }
                     try {
                         String update = parser.parseCheck(getResponseBody(client, request));
